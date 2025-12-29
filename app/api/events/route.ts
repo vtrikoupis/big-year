@@ -60,6 +60,7 @@ export async function GET(req: Request) {
       .filter((e: any) => e?.start?.date && e.status !== "cancelled")
       .map((e: any) => ({
         id: `${r.calendarId || "primary"}:${e.id}`,
+        calendarId: r.calendarId || "primary",
         summary: e.summary || "(Untitled)",
         startDate: e.start.date as string,
         endDate: e.end?.date as string,

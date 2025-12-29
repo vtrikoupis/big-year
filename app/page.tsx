@@ -9,9 +9,10 @@ export default function HomePage() {
   const [year, setYear] = useState<number>(new Date().getFullYear());
   const [events, setEvents] = useState<AllDayEvent[]>([]);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
-  const [calendars, setCalendars] = useState<{ id: string; summary: string; primary?: boolean }[]>([]);
+  const [calendars, setCalendars] = useState<{ id: string; summary: string; primary?: boolean; backgroundColor?: string }[]>([]);
   const [selectedCalendarIds, setSelectedCalendarIds] = useState<string[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+  const [calendarColors, setCalendarColors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (status === "authenticated") {
@@ -33,13 +34,31 @@ export default function HomePage() {
     fetch(`/api/calendars`, { cache: "no-store" })
       .then((res) => res.json())
       .then((data) => {
-        const list = (data.calendars || []) as { id: string; summary: string; primary?: boolean }[];
+        const list = (data.calendars || []) as { id: string; summary: string; primary?: boolean; backgroundColor?: string }[];
         setCalendars(list);
         setSelectedCalendarIds(list.map((c) => c.id));
+        // Load colors from localStorage, default to API backgroundColor or a soft palette
+        try {
+          const stored = JSON.parse(localStorage.getItem("calendarColors") || "{}");
+          const next: Record<string, string> = { ...(stored || {}) };
+          for (const c of list) {
+            if (!next[c.id]) {
+              next[c.id] = c.backgroundColor || "#cbd5e1"; // slate-300 fallback
+            }
+          }
+          setCalendarColors(next);
+          localStorage.setItem("calendarColors", JSON.stringify(next));
+        } catch {
+          const next: Record<string, string> = {};
+          for (const c of list) next[c.id] = c.backgroundColor || "#cbd5e1";
+          setCalendarColors(next);
+          localStorage.setItem("calendarColors", JSON.stringify(next));
+        }
       })
       .catch(() => {
         setCalendars([]);
         setSelectedCalendarIds([]);
+        setCalendarColors({});
       });
   }, [status]);
 
@@ -108,7 +127,7 @@ export default function HomePage() {
                 calendars.map((c) => {
                   const checked = selectedCalendarIds.includes(c.id);
                   return (
-                    <label key={c.id} className="flex items-center gap-2 text-sm p-2 rounded hover:bg-accent cursor-pointer">
+                    <div key={c.id} className="flex items-center gap-2 text-sm p-2 rounded hover:bg-accent">
                       <input
                         type="checkbox"
                         className="accent-foreground"
@@ -119,9 +138,23 @@ export default function HomePage() {
                           );
                         }}
                       />
-                      <span className="truncate">{c.summary}</span>
-                      {c.primary && <span className="ml-auto text-[10px] text-muted-foreground">primary</span>}
-                    </label>
+                      <span className="truncate flex-1">{c.summary}</span>
+                      {c.primary && <span className="text-[10px] text-muted-foreground">primary</span>}
+                      <input
+                        type="color"
+                        value={calendarColors[c.id] || "#cbd5e1"}
+                        onChange={(e) => {
+                          const next = { ...calendarColors, [c.id]: e.target.value };
+                          setCalendarColors(next);
+                          try {
+                            localStorage.setItem("calendarColors", JSON.stringify(next));
+                          } catch {}
+                        }}
+                        className="h-5 w-5 rounded border p-0"
+                        aria-label={`Color for ${c.summary}`}
+                        title={`Color for ${c.summary}`}
+                      />
+                    </div>
                   );
                 })
               ) : (
@@ -146,7 +179,7 @@ export default function HomePage() {
         </>
       )}
       <div className="flex-1 min-h-0">
-        <YearCalendar year={year} events={events} signedIn={status === "authenticated"} />
+        <YearCalendar year={year} events={events} signedIn={status === "authenticated"} calendarColors={calendarColors} />
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ export type AllDayEvent = {
   summary: string;
   startDate: string; // YYYY-MM-DD
   endDate: string; // YYYY-MM-DD (exclusive)
+  calendarId?: string;
 };
 
 function formatDateKey(date: Date) {
@@ -100,10 +101,12 @@ export function YearCalendar({
   year,
   events,
   signedIn,
+  calendarColors = {},
 }: {
   year: number;
   events: AllDayEvent[];
   signedIn: boolean;
+  calendarColors?: Record<string, string>;
 }) {
   const todayKey = formatDateKey(new Date());
   const dateMap = useMemo(() => expandEventsToDateMap(events), [events]);
@@ -232,6 +235,9 @@ export function YearCalendar({
                 const top = pad + row * (cellSizePx.h + gap) + 20; // 20px to clear numbers
                 const width = span * cellSizePx.w + (span - 1) * gap;
                 const key = `${ev.id}:${row}:${colStart0}-${span}`;
+                const bg = ev.calendarId
+                  ? calendarColors[ev.calendarId]
+                  : undefined;
                 bars.push(
                   <div
                     key={key}
@@ -243,7 +249,13 @@ export function YearCalendar({
                     }}
                     className="px-1"
                   >
-                    <div className="truncate rounded-sm bg-secondary px-1 py-0.5 text-[10px] text-secondary-foreground shadow-sm">
+                    <div
+                      className="truncate rounded-sm px-1 py-0.5 text-[10px] shadow-sm"
+                      style={{
+                        backgroundColor: bg || "hsl(var(--secondary))",
+                        color: "hsl(var(--secondary-foreground))",
+                      }}
+                    >
                       {ev.summary}
                     </div>
                   </div>
