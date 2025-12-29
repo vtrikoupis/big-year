@@ -172,9 +172,6 @@ export const authOptions: NextAuthOptions = {
   },
   session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
-  // In development, allow linking accounts that share the same email even if the user isn't currently signed-in.
-  // This helps recover when partial users exist after local wipes. Remove or set to false in production.
-  allowDangerousEmailAccountLinking: process.env.NODE_ENV !== "production",
 };
 
 

@@ -2,6 +2,8 @@
 import React, { useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { Calendar as CalendarIcon } from "lucide-react";
+import { signIn } from "next-auth/react";
+import { Button } from "@/components/ui/button";
 
 export type AllDayEvent = {
   id: string;
@@ -499,12 +501,18 @@ export function YearCalendar({
       )}
 
       {!signedIn && (
-        <div className="pointer-events-none fixed inset-0 flex items-center justify-center bg-background/70">
-          <div className="rounded-md border bg-card p-4 text-center shadow-sm">
-            <div className="text-lg font-medium">Sign in with Google</div>
-            <div className="text-sm text-muted-foreground">
+        <div className="fixed inset-0 flex items-center justify-center bg-background/70">
+          <div className="rounded-md border bg-card p-4 text-center shadow-sm pointer-events-auto">
+            <div className="text-lg font-medium mb-2">Sign in with Google</div>
+            <div className="text-sm text-muted-foreground mb-4">
               Only all-day events will appear once you sign in.
             </div>
+            <Button onClick={() => {
+              const callbackUrl = typeof window !== "undefined" ? window.location.href : "/";
+              signIn("google", { callbackUrl });
+            }}>
+              Sign in with Google
+            </Button>
           </div>
         </div>
       )}

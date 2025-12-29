@@ -386,7 +386,12 @@ export default function HomePage() {
     <div className="h-screen w-screen flex flex-col">
       <div className="grid grid-cols-3 items-center p-3 border-b">
         <div className="flex items-center gap-2">
-          <Button variant="secondary" aria-label="Open menu" onClick={() => setSidebarOpen(true)}>
+          <Button 
+            variant="secondary" 
+            aria-label="Open menu" 
+            onClick={() => setSidebarOpen(true)}
+            disabled={status !== "authenticated"}
+          >
             ☰
           </Button>
         </div>
