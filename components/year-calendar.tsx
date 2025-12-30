@@ -268,7 +268,9 @@ export function YearCalendar({
       // Check if event has an end date (endDate is exclusive, so if it's different from startDate + 1 day, it's a multi-day event)
       const start = new Date(popover.event.startDate + "T00:00:00Z");
       const end = new Date(popover.event.endDate + "T00:00:00Z");
-      const daysDiff = Math.round((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+      const daysDiff = Math.round(
+        (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+      );
       if (daysDiff > 1) {
         setEditHasEndDate(true);
         // Convert exclusive endDate to inclusive for editing
@@ -543,7 +545,12 @@ export function YearCalendar({
                     onChange={(e) => {
                       const v = e.target.value;
                       setEditStartDate(v);
-                      if (editHasEndDate && editEndDate && v && editEndDate < v) {
+                      if (
+                        editHasEndDate &&
+                        editEndDate &&
+                        v &&
+                        editEndDate < v
+                      ) {
                         setEditEndDate(v);
                       }
                     }}
@@ -587,28 +594,31 @@ export function YearCalendar({
                     onChange={(e) => setEditCalendarId(e.target.value)}
                     disabled={isSubmitting}
                   >
-                    {writableAccountsWithCalendars.length > 0 ? (
-                      writableAccountsWithCalendars.map(
-                        ({ accountId, email, list }) => (
-                          <optgroup
-                            key={accountId || email}
-                            label={email && email.length ? email : accountId || "Account"}
-                          >
-                            {list.map((c) => (
-                              <option key={c.id} value={c.id}>
-                                {c.summary}
-                              </option>
-                            ))}
-                          </optgroup>
+                    {writableAccountsWithCalendars.length > 0
+                      ? writableAccountsWithCalendars.map(
+                          ({ accountId, email, list }) => (
+                            <optgroup
+                              key={accountId || email}
+                              label={
+                                email && email.length
+                                  ? email
+                                  : accountId || "Account"
+                              }
+                            >
+                              {list.map((c) => (
+                                <option key={c.id} value={c.id}>
+                                  {c.summary}
+                                </option>
+                              ))}
+                            </optgroup>
+                          )
                         )
-                      )
-                    ) : (
-                      writableCalendars.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {(c.accountEmail ? `${c.accountEmail} — ` : "") + c.summary}
-                        </option>
-                      ))
-                    )}
+                      : writableCalendars.map((c) => (
+                          <option key={c.id} value={c.id}>
+                            {(c.accountEmail ? `${c.accountEmail} — ` : "") +
+                              c.summary}
+                          </option>
+                        ))}
                   </select>
                 </div>
               </div>
@@ -632,7 +642,11 @@ export function YearCalendar({
                       alert("Calendar is required");
                       return;
                     }
-                    if (editHasEndDate && editEndDate && editEndDate < editStartDate) {
+                    if (
+                      editHasEndDate &&
+                      editEndDate &&
+                      editEndDate < editStartDate
+                    ) {
                       alert("End date must be on/after start date");
                       return;
                     }
@@ -661,7 +675,9 @@ export function YearCalendar({
             </>
           ) : (
             <>
-              <div className="px-3 py-2 font-medium">{popover.event.summary}</div>
+              <div className="px-3 py-2 font-medium">
+                {popover.event.summary}
+              </div>
               <div className="px-3 text-sm text-muted-foreground flex items-center gap-2">
                 <span
                   className="inline-block h-2.5 w-2.5 rounded-full"
@@ -744,7 +760,7 @@ export function YearCalendar({
       {!signedIn && (
         <div className="fixed inset-0 flex items-center justify-center bg-background/70">
           <div className="rounded-md border bg-card p-4 text-center shadow-sm pointer-events-auto">
-            <div className="text-lg font-medium mb-2">Sign in with Google</div>
+            <div className="text-lg font-medium mb-2">Yearly Calendar</div>
             <div className="text-sm text-muted-foreground mb-4">
               Only all-day events will appear once you sign in.
             </div>
