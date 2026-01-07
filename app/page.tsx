@@ -1,6 +1,7 @@
 "use client";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { useEffect, useMemo, useState, useRef } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -989,19 +990,38 @@ export default function HomePage() {
             </div>
             <div className="p-3 border-t">
               {status === "authenticated" ? (
-                <Button
-                  className="w-full justify-center gap-2 rounded-full"
-                  variant="outline"
-                  onClick={() => {
-                    setSidebarOpen(false);
-                    signOut();
-                  }}
-                >
-                  Sign out
-                </Button>
+                <>
+                  <Button
+                    className="w-full justify-center gap-2 rounded-full"
+                    variant="outline"
+                    onClick={() => {
+                      setSidebarOpen(false);
+                      signOut();
+                    }}
+                  >
+                    Sign out
+                  </Button>
+                  <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground mt-3">
+                    <Link
+                      href="/privacy"
+                      className="hover:text-foreground transition-colors"
+                      onClick={() => setSidebarOpen(false)}
+                    >
+                      Privacy Policy
+                    </Link>
+                    <span>•</span>
+                    <Link
+                      href="/terms"
+                      className="hover:text-foreground transition-colors"
+                      onClick={() => setSidebarOpen(false)}
+                    >
+                      Terms of Service
+                    </Link>
+                  </div>
+                </>
               ) : (
                 <Button
-                  className="w-full"
+                  className="w-full justify-center"
                   onClick={() => {
                     setSidebarOpen(false);
                     signIn("google");

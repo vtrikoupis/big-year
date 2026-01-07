@@ -1,5 +1,6 @@
 "use client";
 import React, { useMemo } from "react";
+import Link from "next/link";
 import { cn, formatDateKey } from "@/lib/utils";
 import {
   Calendar as CalendarIcon,
@@ -867,12 +868,13 @@ export function YearCalendar({
 
       {!signedIn && (
         <div className="fixed inset-0 flex items-center justify-center bg-background/70">
-          <div className="rounded-md border bg-card p-12 text-center shadow-sm pointer-events-auto">
-            <div className="text-lg font-medium mb-2">Big Year</div>
+          <div className="w-[400px] max-w-[80vw] rounded-md border bg-card p-5 md:p-12 text-center shadow-sm pointer-events-auto">
+            <div className="text-lg font-medium mb-1">Big Year</div>
             <div className="text-sm text-muted-foreground mb-4">
-              Only all-day events will appear once you sign in.
+              A calendar for all-day events.
             </div>
             <Button
+              className="w-full"
               onClick={() => {
                 const callbackUrl =
                   typeof window !== "undefined" ? window.location.href : "/";
@@ -881,6 +883,21 @@ export function YearCalendar({
             >
               Sign in with Google
             </Button>
+            <div className="mt-6 flex items-center justify-center gap-3 text-xs text-muted-foreground">
+              <Link
+                href="/privacy"
+                className="hover:text-foreground transition-colors"
+              >
+                Privacy Policy
+              </Link>
+              <span>•</span>
+              <Link
+                href="/terms"
+                className="hover:text-foreground transition-colors"
+              >
+                Terms of Service
+              </Link>
+            </div>
           </div>
         </div>
       )}
